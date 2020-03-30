@@ -131,7 +131,6 @@ export default {
     inputClick (object, parameterName) {
       this.richEditor.object = object
       this.richEditor.parameterName = parameterName
-      this.richEditor.instance.focus(true)
       this.richEditor.dialogVisible = true
     },
     editorConfirm () {
