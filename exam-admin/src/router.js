@@ -94,6 +94,13 @@ const constantRoutes = [
         name: 'ExamPaperEdit',
         meta: { title: '试卷编辑', noCache: true, activeMenu: '/exam/paper/list' },
         hidden: false
+      },
+      {
+        path: 'paper/random',
+        component: () => import('@/views/exam/paper/random'),
+        name: 'ExamPaperRandom',
+        meta: { title: '智能试卷', noCache: true, activeMenu: '/exam/paper/list' },
+        hidden: false
       }
     ]
   },

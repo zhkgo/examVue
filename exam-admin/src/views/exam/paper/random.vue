@@ -1,5 +1,31 @@
 <template>
-  <div class="app-container">
+  <div style="display: flex;">
+  <div class="app-container" style="width: 400px; border-right: 1px solid rgb(192, 196, 204);">
+     <el-form :model="ai" ref="ai" >
+      <el-form-item label="年级"  prop="level" style="display: none;" required>
+        <el-input v-model="ai.level"/>
+      </el-form-item>
+      <el-form-item label="学科"  prop="subjectId" style="display: none;" required>
+        <el-input v-model="ai.subjectId"/>
+      </el-form-item>
+      <el-form-item label="单选题数量" prop="singleChoice" required>
+        <el-input-number v-model="ai.singleChoice" :precision="0" :step="1" :max="100" :min="0"></el-input-number>
+      </el-form-item>
+      <el-form-item label="多选题数量" prop="multipleChoice" required>
+        <el-input-number v-model="ai.multipleChoice" :precision="0" :step="1" :max="100" :min="0"></el-input-number>
+      </el-form-item>
+      <el-form-item label="判断题数量" prop="trueFalse" required>
+        <el-input-number v-model="ai.trueFalse" :precision="0" :step="1" :max="100" :min="0"></el-input-number>
+      </el-form-item>
+      <el-form-item label="填空题数量" prop="gapFilling" required>
+        <el-input-number v-model="ai.gapFilling" :precision="0" :step="1" :max="100" :min="0"></el-input-number>
+      </el-form-item>
+      <el-form-item label="简答题数量" prop="shortAnswer" required>
+        <el-input-number v-model="ai.shortAnswer" :precision="0" :step="1" :max="100" :min="0"></el-input-number>
+      </el-form-item>
+    </el-form>
+  </div>
+  <div class="app-container" style="flex: 1 1 0%;">
     <el-form :model="form" ref="form" label-width="100px" v-loading="formLoading" :rules="rules">
       <el-form-item label="年级：" prop="level" required>
         <el-select v-model="form.level" placeholder="年级"  @change="levelChange">
@@ -53,8 +79,11 @@
         <el-button type="primary" @click="submitForm">提交</el-button>
         <el-button @click="resetForm">重置</el-button>
         <el-button type="success" @click="addTitle">添加标题</el-button>
+        <el-button type="success" @click="generate">智能选题</el-button>
       </el-form-item>
     </el-form>
+   </div>
+
     <el-dialog :visible.sync="questionPage.showDialog"  width="70%">
       <el-form :model="questionPage.queryParam" ref="queryForm" :inline="true">
         <el-form-item label="ID：">
@@ -94,7 +123,7 @@ import Pagination from '@/components/Pagination'
 import QuestionShow from '../question/components/Show'
 import examPaperApi from '@/api/examPaper'
 import questionApi from '@/api/question'
-
+import vue from 'vue'
 export default {
   components: { Pagination, QuestionShow },
   data () {
@@ -108,6 +137,15 @@ export default {
         name: '',
         suggestTime: null,
         titleItems: []
+      },
+      ai: {
+        level: null,
+        subjectId: null,
+        singleChoice: null,
+        multipleChoice: null,
+        trueFalse: null,
+        gapFilling: null,
+        shortAnswer: null
       },
       subjectFilter: null,
       formLoading: false,
@@ -184,7 +222,28 @@ export default {
         }
       })
     },
+    generate () {
+      if (this.form.subjectId == null || this.form.level == null) {
+        vue.prototype.$message.error('请先选择年级和学科！')
+      } else {
+        this.ai.subjectId = this.form.subjectId
+        this.ai.level = this.form.level
+        this.formLoading = true
+        examPaperApi.randomPaper(this.ai).then(re => {
+          if (re.code === 1) {
+            this.form = re.response
+            this.formLoading = false
+          } else {
+            this.$message.error(re.message)
+            this.formLoading = false
+          }
+        }).catch(e => {
+          this.formLoading = false
+        })
+      }
+    },
     addTitle () {
+      console.log(this.form.titleItems)
       this.form.titleItems.push({
         name: '',
         questionItems: []
@@ -260,6 +319,10 @@ export default {
   .exampaper-item-box {
     .q-title {
       margin: 0px 5px 0px 5px;
+    }
+    .divide {
+      width: 300px;
+      float: left;
     }
   }
 </style>
