@@ -79,7 +79,6 @@ export default {
   },
   created: function () {
     if (this.qType === 1 || this.qType === 2) {
-      console.log(this.question.items)
       const newItems = JSON.parse(JSON.stringify(this.question.items))
       for (let i = newItems.length - 1; i >= 0; i--) {
         this.swap(this.question.items[i], this.question.items[Math.floor(Math.random() * (i + 1))])
