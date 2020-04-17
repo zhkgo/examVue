@@ -133,7 +133,9 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.loginForm.password = this.$getRsaCode(this.loginForm.password)
+          if (this.loginForm.password) {
+            this.loginForm.password = this.$getRsaCode(this.loginForm.password)
+          }
           loginApi.login(this.loginForm).then(function (result) {
             if (result && result.code === 1) {
               _this.setUserName(_this.loginForm.userName)

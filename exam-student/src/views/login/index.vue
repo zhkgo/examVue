@@ -8,16 +8,19 @@
         <div class="lowin-box-inner">
           <el-form ref="loginForm" :model="loginForm" :rules="loginRules">
             <p>在线答题系统</p>
+             <el-form-item prop="userName">
             <div class="lowin-group">
               <label>用户名 </label>
               <el-input ref="userName" v-model="loginForm.userName" class="lowin-input" placeholder="用户名" name="userName" type="text" tabindex="1" auto-complete="on"/>
             </div>
+            </el-form-item>
+            <el-form-item prop="password">
             <div class="lowin-group password-group">
               <label>密码 <a href="#" class="forgot-link">忘记密码?</a></label>
               <el-input  class="lowin-input" :key="passwordType" ref="password" v-model="loginForm.password" :type="passwordType"
                 placeholder="密码" name="password" tabindex="2" auto-complete="on" @keyup.native="checkCapslock" @blur="capsTooltip = false" @keyup.enter.native="handleLogin"/>
             </div>
-
+            </el-form-item>
             <el-button :loading="loading" type="text" class="lowin-btn login-btn"  @click.native.prevent="handleLogin">登录</el-button>
 
             <div class="text-foot">
@@ -71,7 +74,7 @@ export default {
     }
   },
   created () {
-    // window.addEventListener('storage', this.afterQRScan)
+
   },
   mounted () {
     if (this.loginForm.userName === '') {
@@ -112,7 +115,9 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.loginForm.password = this.$getRsaCode(this.loginForm.password)
+          if (this.loginForm.password) {
+            this.loginForm.password = this.$getRsaCode(this.loginForm.password)
+          }
           loginApi.login(this.loginForm).then(function (result) {
             if (result && result.code === 1) {
               _this.setUserName(_this.loginForm.userName)

@@ -94,7 +94,9 @@ export default {
       this.$refs.form.validate((valid) => {
         if (valid) {
           this.formLoading = true
-          this.form.password = this.$getRsaCode(this.form.password)
+          if (this.form.password){
+            this.form.password = this.$getRsaCode(this.form.password)
+          }
           userApi.createUser(this.form).then(data => {
             if (data.code === 1) {
               _this.form.id = data.response.id
